@@ -3,17 +3,20 @@ package main
 import (
 	"log"
 
-	"moka/internal/router"
-	"moka/internal/service"
+	"mika/internal/config"
+	"mika/internal/database"
+	"mika/internal/router"
 )
 
 func main() {
-	service.InitDB()
+	cfg := config.Load()
+
+	database.Init(cfg.DBPath)
 
 	r := router.Setup()
 
-	log.Println("Server starting on :8080")
-	if err := r.Run(":8080"); err != nil {
+	log.Printf("Server starting on :%s", cfg.ServerPort)
+	if err := r.Run(":" + cfg.ServerPort); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
 }
