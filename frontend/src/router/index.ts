@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import AdminLayout from '../layouts/AdminLayout.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -9,12 +10,19 @@ const router = createRouter({
     { path: '/order', name: 'orders', component: () => import('../views/OrderView.vue'), meta: { requiresAuth: true } },
     { path: '/login', name: 'login', component: () => import('../views/LoginView.vue') },
     { path: '/register', name: 'register', component: () => import('../views/RegisterView.vue') },
-    { path: '/admin', name: 'admin-dashboard', component: () => import('../views/admin/AdminDashboard.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
-    { path: '/admin/users', name: 'admin-users', component: () => import('../views/admin/AdminUsers.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
-    { path: '/admin/coupons', name: 'admin-coupons', component: () => import('../views/admin/AdminCoupons.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
-    { path: '/admin/products', name: 'admin-products', component: () => import('../views/admin/AdminProducts.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
-    { path: '/admin/cards', name: 'admin-cards', component: () => import('../views/admin/AdminCards.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
-    { path: '/admin/orders', name: 'admin-orders', component: () => import('../views/admin/AdminOrders.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
+    {
+      path: '/admin',
+      component: AdminLayout,
+      meta: { requiresAuth: true, requiresAdmin: true },
+      children: [
+        { path: '', name: 'admin-dashboard', component: () => import('../views/admin/AdminDashboard.vue') },
+        { path: 'products', name: 'admin-products', component: () => import('../views/admin/AdminProducts.vue') },
+        { path: 'cards', name: 'admin-cards', component: () => import('../views/admin/AdminCards.vue') },
+        { path: 'orders', name: 'admin-orders', component: () => import('../views/admin/AdminOrders.vue') },
+        { path: 'coupons', name: 'admin-coupons', component: () => import('../views/admin/AdminCoupons.vue') },
+        { path: 'users', name: 'admin-users', component: () => import('../views/admin/AdminUsers.vue') },
+      ],
+    },
   ],
 })
 

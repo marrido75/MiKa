@@ -25,14 +25,7 @@ const handleLogout = () => {
           <span v-if="cart.totalCount > 0" class="cart-badge">{{ cart.totalCount }}</span>
         </router-link>
         <router-link v-if="auth.isLoggedIn()" to="/order" class="nav-link">我的订单</router-link>
-        <template v-if="auth.isAdmin()">
-          <router-link to="/admin" class="nav-link admin-link">控制台</router-link>
-          <router-link to="/admin/users" class="nav-link admin-link">用户</router-link>
-          <router-link to="/admin/coupons" class="nav-link admin-link">优惠券</router-link>
-          <router-link to="/admin/products" class="nav-link admin-link">商品</router-link>
-          <router-link to="/admin/cards" class="nav-link admin-link">卡牌</router-link>
-          <router-link to="/admin/orders" class="nav-link admin-link">订单</router-link>
-        </template>
+        <router-link v-if="auth.isAdmin()" to="/admin" class="nav-link admin-link">管理后台</router-link>
       </div>
 
       <div class="navbar-actions">
@@ -125,10 +118,6 @@ const handleLogout = () => {
   align-items: center;
   justify-content: center;
   line-height: 1;
-}
-
-.admin-link {
-  color: var(--color-accent);
 }
 
 .navbar-actions {
