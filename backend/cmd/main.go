@@ -13,7 +13,7 @@ func main() {
 
 	database.Init(cfg.DBPath)
 
-	r := router.Setup()
+	r := router.Setup(cfg)
 
 	log.Printf("Server starting on :%s", cfg.ServerPort)
 	if err := r.Run(":" + cfg.ServerPort); err != nil {
