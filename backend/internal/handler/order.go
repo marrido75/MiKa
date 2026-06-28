@@ -22,7 +22,11 @@ func CreateOrder(c *gin.Context) {
 		return
 	}
 
-	userID, _ := c.Get("user_id")
+	userID, ok := c.Get("user_id")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
 	order, err := service.CreateOrder(userID.(uint), req.ProductID, req.Quantity, req.CouponCode)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -39,7 +43,11 @@ func GetOrder(c *gin.Context) {
 		return
 	}
 
-	userID, _ := c.Get("user_id")
+	userID, ok := c.Get("user_id")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
 	order, err := service.GetOrderByID(uint(id), userID.(uint))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "order not found"})
@@ -49,7 +57,11 @@ func GetOrder(c *gin.Context) {
 }
 
 func GetUserOrders(c *gin.Context) {
-	userID, _ := c.Get("user_id")
+	userID, ok := c.Get("user_id")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
 	orders, err := service.GetUserOrders(userID.(uint))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

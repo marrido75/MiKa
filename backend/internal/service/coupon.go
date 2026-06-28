@@ -5,6 +5,8 @@ import (
 	"mika/internal/database"
 	"mika/internal/model"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 func VerifyCoupon(code string, amount float64) (*model.Coupon, error) {
@@ -35,4 +37,17 @@ func CalculateDiscount(coupon *model.Coupon, amount float64) float64 {
 		return amount * coupon.DiscountValue / 100
 	}
 	return 0
+}
+
+func IncrementCouponUsage(couponID uint) error {
+	result := database.DB.Model(&model.Coupon{}).
+		Where("id = ? AND (usage_limit = 0 OR used_count < usage_limit)", couponID).
+		Update("used_count", gorm.Expr("used_count + 1"))
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("coupon usage limit reached")
+	}
+	return nil
 }

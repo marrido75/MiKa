@@ -151,3 +151,42 @@ func AdminGetCoupons(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"coupons": coupons})
 }
+
+func AdminUpdateCoupon(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid coupon id"})
+		return
+	}
+
+	var coupon model.Coupon
+	if err := database.DB.First(&coupon, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&coupon); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := database.DB.Save(&coupon).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, coupon)
+}
+
+func AdminDeleteCoupon(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid coupon id"})
+		return
+	}
+
+	if err := database.DB.Delete(&model.Coupon{}, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
+}
