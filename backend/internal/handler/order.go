@@ -33,7 +33,7 @@ func CreateOrder(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, order)
+	c.JSON(http.StatusOK, serializeOrder(*order))
 }
 
 func GetOrder(c *gin.Context) {
@@ -53,7 +53,7 @@ func GetOrder(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "order not found"})
 		return
 	}
-	c.JSON(http.StatusOK, order)
+	c.JSON(http.StatusOK, serializeOrder(*order))
 }
 
 func GetUserOrders(c *gin.Context) {
@@ -67,5 +67,9 @@ func GetUserOrders(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"orders": orders})
+	list := make([]map[string]interface{}, len(orders))
+	for i, o := range orders {
+		list[i] = serializeOrder(o)
+	}
+	c.JSON(http.StatusOK, gin.H{"orders": list})
 }

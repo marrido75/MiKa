@@ -22,7 +22,17 @@ func AdminCreateProduct(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, product)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":          product.ID,
+		"name":        product.Name,
+		"description": product.Description,
+		"price":       product.Price,
+		"category":    product.Category,
+		"image_url":   product.ImageURL,
+		"stock":       product.Stock,
+		"status":      product.Status,
+		"created_at":  product.CreatedAt,
+	})
 }
 
 func AdminUpdateProduct(c *gin.Context) {
@@ -47,7 +57,17 @@ func AdminUpdateProduct(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, existing)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":          existing.ID,
+		"name":        existing.Name,
+		"description": existing.Description,
+		"price":       existing.Price,
+		"category":    existing.Category,
+		"image_url":   existing.ImageURL,
+		"stock":       existing.Stock,
+		"status":      existing.Status,
+		"created_at":  existing.CreatedAt,
+	})
 }
 
 func AdminDeleteProduct(c *gin.Context) {
@@ -103,7 +123,11 @@ func AdminGetOrders(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"orders": orders})
+	list := make([]map[string]interface{}, len(orders))
+	for i, o := range orders {
+		list[i] = serializeOrder(o)
+	}
+	c.JSON(http.StatusOK, list)
 }
 
 type CreateCouponRequest struct {
@@ -135,7 +159,7 @@ func AdminCreateCoupon(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, coupon)
+	c.JSON(http.StatusOK, serializeCoupon(coupon))
 }
 
 func AdminGetCoupons(c *gin.Context) {
@@ -144,7 +168,11 @@ func AdminGetCoupons(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"coupons": coupons})
+	list := make([]map[string]interface{}, len(coupons))
+	for i, c := range coupons {
+		list[i] = serializeCoupon(c)
+	}
+	c.JSON(http.StatusOK, list)
 }
 
 func AdminUpdateCoupon(c *gin.Context) {
@@ -169,7 +197,7 @@ func AdminUpdateCoupon(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, coupon)
+	c.JSON(http.StatusOK, serializeCoupon(coupon))
 }
 
 func AdminDeleteCoupon(c *gin.Context) {
@@ -208,7 +236,11 @@ func AdminGetStats(c *gin.Context) {
 func AdminGetUsers(c *gin.Context) {
 	var users []model.User
 	database.DB.Select("id, username, email, role, created_at").Find(&users)
-	c.JSON(http.StatusOK, users)
+	list := make([]map[string]interface{}, len(users))
+	for i, u := range users {
+		list[i] = serializeUser(u)
+	}
+	c.JSON(http.StatusOK, list)
 }
 
 func AdminGetProductCards(c *gin.Context) {
@@ -219,7 +251,11 @@ func AdminGetProductCards(c *gin.Context) {
 	}
 	var cards []model.Card
 	database.DB.Where("product_id = ?", id).Order("created_at DESC").Find(&cards)
-	c.JSON(http.StatusOK, cards)
+	list := make([]map[string]interface{}, len(cards))
+	for i, card := range cards {
+		list[i] = serializeCard(card)
+	}
+	c.JSON(http.StatusOK, list)
 }
 
 func AdminDeleteCard(c *gin.Context) {

@@ -32,6 +32,6 @@ func VerifyCoupon(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"discount":    discount,
 		"final_price": finalPrice,
-		"coupon":      coupon,
+		"coupon":      serializeCoupon(*coupon),
 	})
 }

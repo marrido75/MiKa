@@ -12,7 +12,21 @@ import (
 func GetProducts(c *gin.Context) {
 	category := c.Query("category")
 	products, total := service.GetProducts(category)
-	c.JSON(http.StatusOK, gin.H{"products": products, "total": total})
+	list := make([]map[string]interface{}, len(products))
+	for i, p := range products {
+		list[i] = map[string]interface{}{
+			"id":          p.ID,
+			"name":        p.Name,
+			"description": p.Description,
+			"price":       p.Price,
+			"category":    p.Category,
+			"image_url":   p.ImageURL,
+			"stock":       p.Stock,
+			"status":      p.Status,
+			"created_at":  p.CreatedAt,
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{"products": list, "total": total})
 }
 
 func GetProduct(c *gin.Context) {
@@ -27,5 +41,15 @@ func GetProduct(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
 		return
 	}
-	c.JSON(http.StatusOK, product)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":          product.ID,
+		"name":        product.Name,
+		"description": product.Description,
+		"price":       product.Price,
+		"category":    product.Category,
+		"image_url":   product.ImageURL,
+		"stock":       product.Stock,
+		"status":      product.Status,
+		"created_at":  product.CreatedAt,
+	})
 }

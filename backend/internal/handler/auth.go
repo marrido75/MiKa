@@ -37,7 +37,7 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
+	c.JSON(http.StatusOK, gin.H{"token": token, "user": serializeUser(*user)})
 }
 
 func Login(c *gin.Context) {
@@ -58,7 +58,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
+	c.JSON(http.StatusOK, gin.H{"token": token, "user": serializeUser(*user)})
 }
 
 func GetProfile(c *gin.Context) {
@@ -68,5 +68,5 @@ func GetProfile(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, serializeUser(*user))
 }
