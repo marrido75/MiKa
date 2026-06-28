@@ -96,12 +96,6 @@ func AdminImportCards(c *gin.Context) {
 		return
 	}
 
-	existing, err := service.GetProductByID(req.ProductID)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
-		return
-	}
-
 	for _, content := range req.Contents {
 		card := model.Card{
 			ProductID: req.ProductID,
@@ -111,8 +105,7 @@ func AdminImportCards(c *gin.Context) {
 		database.DB.Create(&card)
 	}
 
-	existing.Stock += len(req.Contents)
-	service.UpdateProduct(existing)
+	syncProductStock(req.ProductID)
 
 	c.JSON(http.StatusOK, gin.H{"message": "imported", "count": len(req.Contents)})
 }
@@ -264,6 +257,21 @@ func AdminDeleteCard(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid card id"})
 		return
 	}
-	database.DB.Delete(&model.Card{}, id)
+
+	var card model.Card
+	if err := database.DB.First(&card, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "card not found"})
+		return
+	}
+
+	productID := card.ProductID
+	database.DB.Delete(&card)
+	syncProductStock(productID)
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
+}
+
+func syncProductStock(productID uint) {
+	var count int64
+	database.DB.Model(&model.Card{}).Where("product_id = ? AND status = ?", productID, "unused").Count(&count)
+	database.DB.Model(&model.Product{}).Where("id = ?", productID).Update("stock", count)
 }

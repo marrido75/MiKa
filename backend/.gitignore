@@ -1,0 +1,9 @@
+mimo.exe
+*.exe
+.vscode/*
+!.vscode/extensions.json
+node_modules/
+dist/
+.env
+mika.db
+*.db
