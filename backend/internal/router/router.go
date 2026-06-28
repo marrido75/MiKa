@@ -31,6 +31,7 @@ func Setup(cfg *config.Config) *gin.Engine {
 		api.GET("/products", handler.GetProducts)
 		api.GET("/products/:id", handler.GetProduct)
 		api.POST("/coupons/verify", handler.VerifyCoupon)
+		api.GET("/categories", handler.GetCategories)
 
 		auth := api.Group("")
 		auth.Use(middleware.AuthRequired())
@@ -58,6 +59,10 @@ func Setup(cfg *config.Config) *gin.Engine {
 			admin.PUT("/coupons/:id", handler.AdminUpdateCoupon)
 			admin.DELETE("/coupons/:id", handler.AdminDeleteCoupon)
 			admin.POST("/sync-stock", handler.AdminSyncStock)
+			admin.GET("/categories", handler.AdminGetCategories)
+			admin.POST("/categories", handler.AdminCreateCategory)
+			admin.PUT("/categories/:id", handler.AdminUpdateCategory)
+			admin.DELETE("/categories/:id", handler.AdminDeleteCategory)
 		}
 	}
 

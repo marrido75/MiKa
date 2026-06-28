@@ -24,6 +24,7 @@ func Init(dbPath string) {
 		&model.Card{},
 		&model.Order{},
 		&model.Coupon{},
+		&model.Category{},
 	)
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)

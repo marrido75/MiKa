@@ -21,6 +21,7 @@ const router = createRouter({
         { path: 'orders', name: 'admin-orders', component: () => import('../views/admin/AdminOrders.vue') },
         { path: 'coupons', name: 'admin-coupons', component: () => import('../views/admin/AdminCoupons.vue') },
         { path: 'users', name: 'admin-users', component: () => import('../views/admin/AdminUsers.vue') },
+        { path: 'categories', name: 'admin-categories', component: () => import('../views/admin/AdminCategories.vue') },
       ],
     },
   ],

@@ -2,20 +2,14 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { productApi, type Product } from '../api/product'
+import { categoryApi, type Category } from '../api/category'
 
 const router = useRouter()
 const products = ref<Product[]>([])
+const categories = ref<Category[]>([])
 const loading = ref(true)
 const activeCategory = ref('all')
 const widgetOpen = ref(false)
-
-const categories = [
-  { value: 'all', label: '全部' },
-  { value: 'game', label: '游戏' },
-  { value: 'vip', label: 'VIP' },
-  { value: 'software', label: '软件' },
-  { value: 'other', label: '其他' },
-]
 
 const stats = [
   { icon: '🛡️', label: '安全可靠' },
@@ -49,7 +43,19 @@ const stockClass = (stock: number) => {
   return 'stock-high'
 }
 
-onMounted(fetchProducts)
+const fetchCategories = async () => {
+  try {
+    const res = await categoryApi.list()
+    categories.value = res.data
+  } catch {
+    categories.value = []
+  }
+}
+
+onMounted(() => {
+  fetchCategories()
+  fetchProducts()
+})
 </script>
 
 <template>
@@ -86,11 +92,18 @@ onMounted(fetchProducts)
 
       <div class="category-bar">
         <button
-          v-for="cat in categories"
-          :key="cat.value"
           class="category-btn"
-          :class="{ active: activeCategory === cat.value }"
-          @click="activeCategory = cat.value; fetchProducts()"
+          :class="{ active: activeCategory === 'all' }"
+          @click="activeCategory = 'all'; fetchProducts()"
+        >
+          全部
+        </button>
+        <button
+          v-for="cat in categories"
+          :key="cat.id"
+          class="category-btn"
+          :class="{ active: activeCategory === cat.name }"
+          @click="activeCategory = cat.name; fetchProducts()"
         >
           {{ cat.label }}
         </button>

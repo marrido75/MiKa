@@ -76,6 +76,17 @@ func main() {
 	}
 	database.DB.Where("code = ?", "SAVE5").FirstOrCreate(&coupon2)
 
+	// Create categories
+	categories := []model.Category{
+		{Name: "game", Label: "游戏", Sort: 1, Status: "active"},
+		{Name: "vip", Label: "会员", Sort: 2, Status: "active"},
+		{Name: "software", Label: "软件", Sort: 3, Status: "active"},
+		{Name: "other", Label: "其他", Sort: 4, Status: "active"},
+	}
+	for _, cat := range categories {
+		database.DB.Where("name = ?", cat.Name).FirstOrCreate(&cat)
+	}
+
 	log.Println("Seed data created successfully!")
 }
 

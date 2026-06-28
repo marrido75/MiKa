@@ -9,6 +9,7 @@ const auth = useAuthStore()
 const menuItems = [
   { path: '/admin', icon: '📊', label: '控制台' },
   { path: '/admin/products', icon: '🛍️', label: '商品管理' },
+  { path: '/admin/categories', icon: '🏷️', label: '分类管理' },
   { path: '/admin/cards', icon: '💳', label: '卡密管理' },
   { path: '/admin/orders', icon: '📦', label: '订单管理' },
   { path: '/admin/coupons', icon: '🎫', label: '优惠券' },
