@@ -65,23 +65,18 @@ func AdminDeleteProduct(c *gin.Context) {
 }
 
 type ImportCardsRequest struct {
-	Contents []string `json:"contents" binding:"required,min=1"`
+	ProductID uint     `json:"product_id" binding:"required"`
+	Contents  []string `json:"contents" binding:"required,min=1"`
 }
 
 func AdminImportCards(c *gin.Context) {
-	productID, err := strconv.ParseUint(c.Param("product_id"), 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid product id"})
-		return
-	}
-
 	var req ImportCardsRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	existing, err := service.GetProductByID(uint(productID))
+	existing, err := service.GetProductByID(req.ProductID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
 		return
@@ -89,7 +84,7 @@ func AdminImportCards(c *gin.Context) {
 
 	for _, content := range req.Contents {
 		card := model.Card{
-			ProductID: uint(productID),
+			ProductID: req.ProductID,
 			Content:   content,
 			Status:    "unused",
 		}
@@ -188,5 +183,51 @@ func AdminDeleteCoupon(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
+}
+
+func AdminGetStats(c *gin.Context) {
+	var totalOrders int64
+	var totalRevenue float64
+	var totalProducts int64
+	var totalUsers int64
+
+	database.DB.Model(&model.Order{}).Where("status = ?", "paid").Count(&totalOrders)
+	database.DB.Model(&model.Order{}).Where("status = ?", "paid").Select("COALESCE(SUM(total_price), 0)").Scan(&totalRevenue)
+	database.DB.Model(&model.Product{}).Count(&totalProducts)
+	database.DB.Model(&model.User{}).Count(&totalUsers)
+
+	c.JSON(http.StatusOK, gin.H{
+		"totalOrders":   totalOrders,
+		"totalRevenue":  totalRevenue,
+		"totalProducts": totalProducts,
+		"totalUsers":    totalUsers,
+	})
+}
+
+func AdminGetUsers(c *gin.Context) {
+	var users []model.User
+	database.DB.Select("id, username, email, role, created_at").Find(&users)
+	c.JSON(http.StatusOK, users)
+}
+
+func AdminGetProductCards(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid product id"})
+		return
+	}
+	var cards []model.Card
+	database.DB.Where("product_id = ?", id).Order("created_at DESC").Find(&cards)
+	c.JSON(http.StatusOK, cards)
+}
+
+func AdminDeleteCard(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid card id"})
+		return
+	}
+	database.DB.Delete(&model.Card{}, id)
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
 }
