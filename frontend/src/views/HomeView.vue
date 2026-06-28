@@ -363,8 +363,8 @@ onMounted(fetchProducts)
 /* Product Grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
 }
 
 .product-card {
@@ -372,7 +372,7 @@ onMounted(fetchProducts)
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--color-border);
   cursor: pointer;
@@ -380,36 +380,36 @@ onMounted(fetchProducts)
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
 }
 
 /* Badges */
 .badge {
   position: absolute;
-  top: 16px;
+  top: 12px;
   z-index: 2;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: #fff;
 }
 
 .badge-soldout {
-  right: 16px;
+  right: 12px;
   background: #ef4444;
 }
 
 .badge-lowstock {
-  right: 16px;
+  right: 12px;
   background: #f59e0b;
 }
 
 /* Card Image */
 .card-image {
   width: 100%;
-  height: 180px;
+  height: 140px;
   overflow: hidden;
 }
 
@@ -429,33 +429,33 @@ onMounted(fetchProducts)
 }
 
 .placeholder-icon {
-  font-size: 48px;
+  font-size: 36px;
   color: rgba(255, 255, 255, 0.7);
 }
 
 /* Card Body */
 .card-body {
-  padding: 20px;
+  padding: 14px;
 }
 
 .card-category {
   display: inline-block;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .card-title {
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   line-height: 1.4;
 }
 
 .card-desc {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-text-secondary);
-  line-height: 1.6;
-  margin-bottom: 16px;
+  line-height: 1.5;
+  margin-bottom: 12px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -469,13 +469,13 @@ onMounted(fetchProducts)
 }
 
 .card-price {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--color-accent);
 }
 
 .card-stock {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 /* Stock colors */
