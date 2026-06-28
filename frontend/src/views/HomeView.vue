@@ -7,6 +7,7 @@ const router = useRouter()
 const products = ref<Product[]>([])
 const loading = ref(true)
 const activeCategory = ref('all')
+const widgetOpen = ref(false)
 
 const categories = [
   { value: 'all', label: '全部' },
@@ -136,6 +137,47 @@ onMounted(fetchProducts)
         </div>
       </div>
     </main>
+
+    <!-- 浮动客服框 -->
+    <div class="float-widget" :class="{ open: widgetOpen }">
+      <button class="float-btn" @click="widgetOpen = !widgetOpen">
+        <span v-if="!widgetOpen">💬</span>
+        <span v-else>✕</span>
+      </button>
+      <div v-if="widgetOpen" class="float-panel">
+        <div class="float-header">
+          <h4>联系客服</h4>
+          <p>工作时间: 9:00 - 22:00</p>
+        </div>
+        <div class="float-body">
+          <div class="contact-item">
+            <span class="contact-icon">📧</span>
+            <div>
+              <span class="contact-label">邮箱</span>
+              <span class="contact-value">support@mika.com</span>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">💬</span>
+            <div>
+              <span class="contact-label">微信</span>
+              <span class="contact-value">MiKa_Service</span>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📱</span>
+            <div>
+              <span class="contact-label">QQ群</span>
+              <span class="contact-value">123456789</span>
+            </div>
+          </div>
+        </div>
+        <div class="float-footer">
+          <p>常见问题?</p>
+          <router-link to="/faq" class="float-link">查看帮助中心 →</router-link>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -482,5 +524,134 @@ onMounted(fetchProducts)
   .product-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Floating Widget */
+.float-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+}
+
+.float-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-pressed));
+  color: #fff;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(168, 230, 207, 0.4);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.float-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 28px rgba(168, 230, 207, 0.5);
+}
+
+.float-panel {
+  position: absolute;
+  bottom: 72px;
+  right: 0;
+  width: 300px;
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.float-header {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-pressed));
+  padding: 20px;
+  color: #fff;
+}
+
+.float-header h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.float-header p {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.float-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.contact-icon {
+  font-size: 20px;
+}
+
+.contact-item > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.contact-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.float-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.float-footer p {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.float-link {
+  font-size: 13px;
+  color: var(--color-primary-pressed);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.float-link:hover {
+  text-decoration: underline;
 }
 </style>
