@@ -32,7 +32,11 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	token, _ := middleware.GenerateToken(user.ID, user.Username, user.Role)
+	token, err := middleware.GenerateToken(user.ID, user.Username, user.Role)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
 }
 
@@ -49,7 +53,11 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, _ := middleware.GenerateToken(user.ID, user.Username, user.Role)
+	token, err := middleware.GenerateToken(user.ID, user.Username, user.Role)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
 }
 

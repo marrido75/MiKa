@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"log"
+	"os"
+)
 
 type Config struct {
 	DBPath    string
@@ -9,11 +12,15 @@ type Config struct {
 }
 
 func Load() *Config {
-	return &Config{
+	cfg := &Config{
 		DBPath:     getEnv("DB_PATH", "mika.db"),
-		JWTSecret:  getEnv("JWT_SECRET", "secret"),
+		JWTSecret:  getEnv("JWT_SECRET", ""),
 		ServerPort: getEnv("SERVER_PORT", "8080"),
 	}
+	if cfg.JWTSecret == "" {
+		log.Fatal("JWT_SECRET environment variable is required")
+	}
+	return cfg
 }
 
 func getEnv(key, fallback string) string {
