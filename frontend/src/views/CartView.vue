@@ -28,17 +28,13 @@ const verifyCoupon = async () => {
   }
   try {
     const res = await couponApi.verify(couponCode.value, cart.total)
-    if (res.data.valid) {
-      discount.value = res.data.discount
-      couponMessage.value = res.data.message
-      message.success(res.data.message)
-    } else {
-      discount.value = 0
-      couponMessage.value = ''
-      message.error(res.data.message)
-    }
+    discount.value = res.data.discount
+    couponMessage.value = `优惠 -¥${res.data.discount.toFixed(2)}`
+    message.success('优惠码验证成功')
   } catch {
-    message.error('验证优惠码失败')
+    discount.value = 0
+    couponMessage.value = ''
+    message.error('优惠码无效或已过期')
   }
 }
 

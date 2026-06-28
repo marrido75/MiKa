@@ -26,7 +26,7 @@ const fetchProducts = async () => {
   loading.value = true
   try {
     const res = await productApi.list()
-    products.value = res.data
+    products.value = res.data.products || res.data
   } catch {
     products.value = []
   } finally {

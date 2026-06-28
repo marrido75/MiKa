@@ -12,9 +12,14 @@ export interface Product {
   created_at: string
 }
 
+export interface ProductListResponse {
+  products: Product[]
+  total: number
+}
+
 export const productApi = {
   list(category?: string) {
-    return api.get<Product[]>('/products', { params: { category } })
+    return api.get<ProductListResponse>('/products', { params: { category } })
   },
 
   detail(id: number) {

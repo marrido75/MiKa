@@ -8,18 +8,18 @@ const router = useRouter()
 const message = useMessage()
 const auth = useAuthStore()
 
-const email = ref('')
+const username = ref('')
 const password = ref('')
 const loading = ref(false)
 
 const handleLogin = async () => {
-  if (!email.value || !password.value) {
+  if (!username.value || !password.value) {
     message.warning('请填写所有字段')
     return
   }
   loading.value = true
   try {
-    await auth.login(email.value, password.value)
+    await auth.login(username.value, password.value)
     message.success('登录成功')
     router.push('/')
   } catch {
@@ -38,13 +38,13 @@ const handleLogin = async () => {
 
       <form class="auth-form" @submit.prevent="handleLogin">
         <div class="form-group">
-          <label class="form-label">邮箱</label>
+          <label class="form-label">用户名</label>
           <input
-            v-model="email"
-            type="email"
+            v-model="username"
+            type="text"
             class="input"
-            placeholder="请输入邮箱"
-            autocomplete="email"
+            placeholder="请输入用户名"
+            autocomplete="username"
           />
         </div>
         <div class="form-group">

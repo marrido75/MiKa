@@ -20,7 +20,7 @@ const fetchProducts = async () => {
   try {
     const category = activeCategory.value === 'all' ? undefined : activeCategory.value
     const res = await productApi.list(category)
-    products.value = res.data
+    products.value = res.data.products || res.data
   } catch {
     products.value = []
   } finally {

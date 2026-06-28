@@ -12,7 +12,7 @@ const result = ref('')
 const fetchProducts = async () => {
   try {
     const res = await productApi.list()
-    products.value = res.data
+    products.value = res.data.products || res.data
   } catch {
     products.value = []
   }
