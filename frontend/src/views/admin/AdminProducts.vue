@@ -2,8 +2,10 @@
 import { ref, onMounted } from 'vue'
 import api from '../../api/index'
 import { productApi, type Product } from '../../api/product'
+import { categoryApi, type Category } from '../../api/category'
 
 const products = ref<Product[]>([])
+const categories = ref<Category[]>([])
 const loading = ref(true)
 const showForm = ref(false)
 const editingId = ref<number | null>(null)
@@ -11,16 +13,9 @@ const form = ref({
   name: '',
   description: '',
   price: 0,
-  category: 'game',
+  category: '',
   image_url: '',
 })
-
-const categories = [
-  { value: 'game', label: '游戏' },
-  { value: 'vip', label: 'VIP' },
-  { value: 'software', label: '软件' },
-  { value: 'other', label: '其他' },
-]
 
 const fetchProducts = async () => {
   loading.value = true
@@ -36,7 +31,7 @@ const fetchProducts = async () => {
 
 const openAdd = () => {
   editingId.value = null
-  form.value = { name: '', description: '', price: 0, category: 'game', image_url: '' }
+  form.value = { name: '', description: '', price: 0, category: categories.value[0]?.name || '', image_url: '' }
   showForm.value = true
 }
 
@@ -77,7 +72,19 @@ const deleteProduct = async (p: Product) => {
   }
 }
 
-onMounted(fetchProducts)
+const fetchCategories = async () => {
+  try {
+    const res = await categoryApi.adminList()
+    categories.value = res.data
+  } catch {
+    categories.value = []
+  }
+}
+
+onMounted(() => {
+  fetchCategories()
+  fetchProducts()
+})
 </script>
 
 <template>
@@ -134,7 +141,7 @@ onMounted(fetchProducts)
           <label>
             <span>分类</span>
             <select v-model="form.category">
-              <option v-for="c in categories" :key="c.value" :value="c.value">{{ c.label }}</option>
+              <option v-for="c in categories" :key="c.id" :value="c.name">{{ c.label }}</option>
             </select>
           </label>
           <label>
