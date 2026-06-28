@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { productApi, type Product } from '../api/product'
-import ProductCard from '../components/ProductCard.vue'
 
+const router = useRouter()
 const products = ref<Product[]>([])
 const loading = ref(true)
 const activeCategory = ref('all')
@@ -13,6 +14,13 @@ const categories = [
   { value: 'vip', label: 'VIP' },
   { value: 'software', label: '软件' },
   { value: 'other', label: '其他' },
+]
+
+const stats = [
+  { icon: '🛡️', label: '安全可靠' },
+  { icon: '⚡', label: '即时发货' },
+  { icon: '💬', label: '售后无忧' },
+  { icon: '🎯', label: '品质保证' },
 ]
 
 const fetchProducts = async () => {
@@ -28,112 +36,267 @@ const fetchProducts = async () => {
   }
 }
 
+const goDetail = (p: Product) => {
+  router.push(`/product/${p.id}`)
+}
+
+const stockClass = (stock: number) => {
+  if (stock === 0) return 'stock-empty'
+  if (stock < 5) return 'stock-critical'
+  if (stock < 10) return 'stock-low'
+  if (stock < 50) return 'stock-medium'
+  return 'stock-high'
+}
+
 onMounted(fetchProducts)
 </script>
 
 <template>
   <div class="home">
-    <section class="hero">
-      <div class="hero-circle hero-circle-1" />
-      <div class="hero-circle hero-circle-2" />
-      <div class="hero-circle hero-circle-3" />
-      <div class="hero-content">
-        <h1 class="hero-title">发现你的数字好物 a </h1>
-        <p class="hero-subtitle">精选优质数字商品，安全可靠，即买即用</p>
-      </div>
-    </section>
-
-    <section class="products-section">
-      <div class="container">
-        <div class="category-bar">
-          <button
-            v-for="cat in categories"
-            :key="cat.value"
-            class="category-btn"
-            :class="{ active: activeCategory === cat.value }"
-            @click="activeCategory = cat.value; fetchProducts()"
-          >
-            {{ cat.label }}
-          </button>
-        </div>
-
-        <div v-if="loading" class="loading-state">加载中...</div>
-        <div v-else-if="products.length === 0" class="empty-state">暂无商品</div>
-        <div v-else class="product-grid">
-          <ProductCard v-for="p in products" :key="p.id" :product="p" />
+    <!-- 店铺介绍 -->
+    <section class="hero-section">
+      <div class="hero-inner container">
+        <div class="accent-line"></div>
+        <h1 class="hero-title">MiKa</h1>
+        <p class="hero-slogan">你的数字好物集市</p>
+        <p class="hero-desc">精选优质数字商品，安全可靠，即买即用</p>
+        <div class="hero-stats">
+          <div v-for="(s, i) in stats" :key="i" class="stat-item">
+            <span class="stat-icon">{{ s.icon }}</span>
+            <span class="stat-label">{{ s.label }}</span>
+          </div>
         </div>
       </div>
     </section>
+
+    <!-- 装饰背景 -->
+    <div class="hero-bg">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+
+    <!-- 商品网格 -->
+    <main class="products-section container">
+      <div class="section-header">
+        <div class="accent-line-sm"></div>
+        <h2 class="section-title">精选商品</h2>
+        <p class="section-subtitle">为你挑选的优质数字商品</p>
+      </div>
+
+      <div class="category-bar">
+        <button
+          v-for="cat in categories"
+          :key="cat.value"
+          class="category-btn"
+          :class="{ active: activeCategory === cat.value }"
+          @click="activeCategory = cat.value; fetchProducts()"
+        >
+          {{ cat.label }}
+        </button>
+      </div>
+
+      <div v-if="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>加载中...</p>
+      </div>
+      <div v-else-if="products.length === 0" class="empty-state">
+        <span class="empty-icon">📦</span>
+        <p>暂无商品</p>
+      </div>
+      <div v-else class="product-grid">
+        <div
+          v-for="p in products"
+          :key="p.id"
+          class="product-card"
+          @click="goDetail(p)"
+        >
+          <!-- 库存/折扣标签 -->
+          <span v-if="p.stock === 0" class="badge badge-soldout">已售罄</span>
+          <span v-else-if="p.stock < 10" class="badge badge-lowstock">仅剩 {{ p.stock }}</span>
+
+          <!-- 图片区域 -->
+          <div class="card-image">
+            <img v-if="p.image_url" :src="p.image_url" :alt="p.name" />
+            <div v-else class="image-placeholder">
+              <span class="placeholder-icon">✦</span>
+            </div>
+          </div>
+
+          <!-- 信息区域 -->
+          <div class="card-body">
+            <span class="card-category tag" :class="`tag-${p.category}`">{{ p.category }}</span>
+            <h3 class="card-title">{{ p.name }}</h3>
+            <p class="card-desc">{{ p.description }}</p>
+            <div class="card-footer">
+              <span class="card-price">¥{{ p.price.toFixed(2) }}</span>
+              <span class="card-stock" :class="stockClass(p.stock)">库存 {{ p.stock }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 </template>
 
 <style scoped>
-.hero {
+.home {
   position: relative;
-  padding: 100px 24px 60px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   overflow: hidden;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  z-index: 1;
+  padding: 80px 0 60px;
+}
+
+.hero-inner {
   text-align: center;
 }
 
-.hero-circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+.accent-line {
+  width: 64px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-pressed));
+  border-radius: 2px;
+  margin: 0 auto 24px;
 }
 
-.hero-circle-1 {
-  width: 300px;
-  height: 300px;
-  top: -80px;
-  right: -60px;
-}
-
-.hero-circle-2 {
-  width: 200px;
-  height: 200px;
-  bottom: -40px;
-  left: 10%;
-}
-
-.hero-circle-3 {
-  width: 120px;
-  height: 120px;
-  top: 30%;
-  left: 5%;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 1;
+.accent-line-sm {
+  width: 48px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-pressed));
+  border-radius: 2px;
+  margin: 0 auto 16px;
 }
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-text);
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.hero-slogan {
+  font-size: 20px;
+  color: var(--color-primary-pressed);
+  font-weight: 500;
   margin-bottom: 12px;
 }
 
-.hero-subtitle {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.85);
+.hero-desc {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  max-width: 480px;
+  margin: 0 auto 32px;
+  line-height: 1.7;
 }
 
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-icon {
+  font-size: 28px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* Decorative circles */
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 400px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.12;
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  background: var(--color-primary);
+  top: -80px;
+  right: -60px;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  background: var(--color-secondary);
+  bottom: -40px;
+  left: 10%;
+}
+
+.circle-3 {
+  width: 120px;
+  height: 120px;
+  background: var(--color-primary-pressed);
+  top: 30%;
+  left: 5%;
+}
+
+/* Products Section */
 .products-section {
-  padding: 40px 0 60px;
+  position: relative;
+  z-index: 1;
+  padding: 40px 24px 80px;
 }
 
+.section-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* Category Bar */
 .category-bar {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 32px;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
 .category-btn {
-  padding: 8px 20px;
+  padding: 10px 24px;
   font-size: 14px;
   font-weight: 500;
   border: 1.5px solid var(--color-border);
@@ -150,22 +313,174 @@ onMounted(fetchProducts)
 }
 
 .category-btn.active {
-  background-color: var(--color-primary);
+  background: var(--color-primary);
   color: #fff;
   border-color: var(--color-primary);
 }
 
+/* Product Grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
 }
 
+.product-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Badges */
+.badge {
+  position: absolute;
+  top: 16px;
+  z-index: 2;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.badge-soldout {
+  right: 16px;
+  background: #ef4444;
+}
+
+.badge-lowstock {
+  right: 16px;
+  background: #f59e0b;
+}
+
+/* Card Image */
+.card-image {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-icon {
+  font-size: 48px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Card Body */
+.card-body {
+  padding: 20px;
+}
+
+.card-category {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.card-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-price {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.card-stock {
+  font-size: 12px;
+}
+
+/* Stock colors */
+.stock-high { color: #22c55e; }
+.stock-medium { color: #3b82f6; }
+.stock-low { color: #f59e0b; }
+.stock-critical { color: #ef4444; }
+.stock-empty { color: #ef4444; font-weight: 600; }
+
+/* States */
 .loading-state,
 .empty-state {
   text-align: center;
-  padding: 60px 0;
-  font-size: 16px;
+  padding: 80px 0;
   color: var(--color-text-secondary);
+}
+
+.empty-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 36px;
+  }
+  .hero-stats {
+    gap: 24px;
+  }
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
