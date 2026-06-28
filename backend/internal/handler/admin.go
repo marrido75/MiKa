@@ -275,3 +275,8 @@ func syncProductStock(productID uint) {
 	database.DB.Model(&model.Card{}).Where("product_id = ? AND status = ?", productID, "unused").Count(&count)
 	database.DB.Model(&model.Product{}).Where("id = ?", productID).Update("stock", count)
 }
+
+func AdminSyncStock(c *gin.Context) {
+	database.SyncAllStock()
+	c.JSON(http.StatusOK, gin.H{"message": "stock synced"})
+}

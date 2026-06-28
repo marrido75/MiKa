@@ -29,5 +29,16 @@ func Init(dbPath string) {
 		log.Fatal("Failed to migrate database:", err)
 	}
 
+	SyncAllStock()
 	log.Println("Database connected and migrated")
+}
+
+func SyncAllStock() {
+	var products []model.Product
+	DB.Find(&products)
+	for _, p := range products {
+		var count int64
+		DB.Model(&model.Card{}).Where("product_id = ? AND status = ?", p.ID, "unused").Count(&count)
+		DB.Model(&model.Product{}).Where("id = ?", p.ID).Update("stock", count)
+	}
 }

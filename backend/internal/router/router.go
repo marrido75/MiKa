@@ -57,6 +57,7 @@ func Setup(cfg *config.Config) *gin.Engine {
 			admin.GET("/coupons", handler.AdminGetCoupons)
 			admin.PUT("/coupons/:id", handler.AdminUpdateCoupon)
 			admin.DELETE("/coupons/:id", handler.AdminDeleteCoupon)
+			admin.POST("/sync-stock", handler.AdminSyncStock)
 		}
 	}
 
