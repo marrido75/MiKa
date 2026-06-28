@@ -1,4 +1,4 @@
-# Moka
+# Mika
 
 Full-stack project with Vite + Vue 3 + TypeScript frontend and Go + Gin backend.
 
