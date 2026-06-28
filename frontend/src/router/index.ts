@@ -1,8 +1,8 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import AdminLayout from '../layouts/AdminLayout.vue'
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: [
     { path: '/', name: 'home', component: () => import('../views/HomeView.vue') },
     { path: '/product/:id', name: 'product', component: () => import('../views/ProductDetailView.vue') },

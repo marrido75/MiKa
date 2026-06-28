@@ -5,7 +5,7 @@ export const themeOverrides: GlobalThemeOverrides = {
     primaryColor: '#A8E6CF',
     primaryColorHover: '#88D4AB',
     primaryColorPressed: '#6BC49B',
-    fontFamily: "'Noto Sans SC', sans-serif",
+    fontFamily: "'PingFang SC', 'Microsoft YaHei', 'HarmonyOS Sans', system-ui, sans-serif",
     borderRadius: '12px',
   },
   Button: {

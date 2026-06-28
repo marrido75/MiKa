@@ -57,7 +57,6 @@ onMounted(fetchProducts)
     <!-- 店铺介绍 -->
     <section class="hero-section">
       <div class="hero-inner container">
-        <div class="accent-line"></div>
         <h1 class="hero-title">MiKa</h1>
         <p class="hero-slogan">你的数字好物集市</p>
         <p class="hero-desc">精选优质数字商品，安全可靠，即买即用</p>
@@ -191,7 +190,7 @@ onMounted(fetchProducts)
 .hero-section {
   position: relative;
   z-index: 1;
-  padding: 80px 0 60px;
+  padding: 0px 0 60px;
 }
 
 .hero-inner {
