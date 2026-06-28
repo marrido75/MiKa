@@ -5,3 +5,5 @@ mimo.exe
 node_modules/
 dist/
 .env
+mika.db
+*.db

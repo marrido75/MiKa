@@ -38,7 +38,7 @@ onMounted(fetchProducts)
       <div class="hero-circle hero-circle-2" />
       <div class="hero-circle hero-circle-3" />
       <div class="hero-content">
-        <h1 class="hero-title">发现你的数字好物</h1>
+        <h1 class="hero-title">发现你的数字好物 a </h1>
         <p class="hero-subtitle">精选优质数字商品，安全可靠，即买即用</p>
       </div>
     </section>
