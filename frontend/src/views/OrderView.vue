@@ -12,7 +12,7 @@ const fetchOrders = async () => {
   loading.value = true
   try {
     const res = await orderApi.myOrders()
-    orders.value = res.data
+    orders.value = res.data.orders || res.data
   } catch {
     message.error('获取订单失败')
   } finally {

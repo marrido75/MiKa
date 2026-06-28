@@ -21,6 +21,10 @@ export interface Order {
   created_at: string
 }
 
+export interface OrderListResponse {
+  orders: Order[]
+}
+
 export const orderApi = {
   create(data: { product_id: number; quantity: number; coupon_code?: string }) {
     return api.post<Order>('/orders', data)
@@ -31,6 +35,6 @@ export const orderApi = {
   },
 
   myOrders() {
-    return api.get<Order[]>('/orders/my')
+    return api.get<OrderListResponse>('/user/orders')
   },
 }
